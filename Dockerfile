@@ -11,6 +11,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY app/ ./app/
 
+# clone https://github.com/sord-dev/212-mcp.git into mcp directory
+RUN git clone https://github.com/sord-dev/212-mcp.git mcp/212-mcp
+
 # Create conky directory for output
 RUN mkdir -p /app/conky
 

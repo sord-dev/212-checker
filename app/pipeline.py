@@ -7,13 +7,26 @@ from typing import Dict, Any
 import logging
 
 # Add MCP path for Trading212 client import
-sys.path.insert(0, './mcp/212-mcp')
+import os
+mcp_path = os.path.join(os.getcwd(), 'mcp', '212-mcp')
+sys.path.insert(0, mcp_path)
 
 try:
     from app.clients.trading212 import Trading212API
-except ImportError:
-    # Fallback for different import paths
-    from clients.trading212 import Trading212API
+except ImportError as e:
+    # Fallback: try direct import from clients module
+    try:
+        from clients.trading212 import Trading212API
+    except ImportError:
+        # Last fallback: try importing from the full path
+        import importlib.util
+        spec = importlib.util.spec_from_file_location(
+            "trading212", 
+            os.path.join(mcp_path, "app", "clients", "trading212.py")
+        )
+        trading212_module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(trading212_module)
+        Trading212API = trading212_module.Trading212API
 
 from .config import settings
 from .summariser import PortfolioSummariser
