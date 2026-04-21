@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  pipeline:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./conky:/app/conky
+      - ./mcp:/app/mcp
+    environment:
+      - TRADING212_CONFIG_PATH=/app/mcp/212-mcp/config/trading212_config.json
+      - OLLAMA_HOST=http://ollama:11434
+      - OLLAMA_MODEL=phi3:mini
+      - OUTPUT_PATH=/app/conky/portfolio.txt
+    depends_on:
+      - ollama
+    networks:
+      - portfolio-net
+
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - portfolio-net
+
+volumes:
+  ollama_data:
+
+networks:
+  portfolio-net:
+    driver: bridge
