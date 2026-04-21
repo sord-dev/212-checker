@@ -1,0 +1,3 @@
+[submodule "mcp/212-mcp"]
+	path = mcp/212-mcp
+	url = https://github.com/sord-dev/212-mcp.git
