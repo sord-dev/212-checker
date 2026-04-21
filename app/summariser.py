@@ -25,16 +25,18 @@ class PortfolioSummariser:
         
         # Extract balance information
         total_value = balance.get("totalValue", 0)
-        available_cash = balance.get("availableToTrade", 0)
-        unrealized_pnl = balance.get("unrealizedProfitLoss", 0)
+        available_cash = balance.get("cash", {}).get("availableToTrade", 0)
+        unrealized_pnl = balance.get("investments", {}).get("unrealizedProfitLoss", 0)
         
         # Build positions summary
         positions_text = []
         if isinstance(positions, list):
             for position in positions[:10]:  # Limit to top 10 positions
-                ticker = position.get("ticker", "Unknown")
-                current_value = position.get("currentValue", 0)
-                ppl = position.get("ppl", 0)
+                instrument = position.get("instrument", {})
+                wallet_impact = position.get("walletImpact", {})
+                ticker = instrument.get("ticker", "Unknown")
+                current_value = wallet_impact.get("currentValue", 0)
+                ppl = wallet_impact.get("unrealizedProfitLoss", 0)
                 positions_text.append(f"{ticker} | £{current_value:.2f} | p&l: £{ppl:.2f}")
         
         positions_summary = "\n".join(positions_text) if positions_text else "No positions found"
